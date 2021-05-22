@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:CW"
+             xmlns:converter="clr-namespace:CW"
+             x:Class="CW.MainPage">
+
+    <ContentPage.BindingContext>
+        <vm:MainPageViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:FavBackgorundColorConverter x:Key="FavBackgorundColorConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <StackLayout>
+        <Label Text="New Item"
+            x:Name="txtNewItem">
+            <Label.GestureRecognizers>
+                    <DragGestureRecognizer CanDrag="True"
+                                           DragStartingCommand="{Binding DragStartingCommand}"
+                                           DropCompletedCommand="{Binding DropCompletedCommand}"
+                                           DropCompletedCommandParameter="{Binding Source={x:Reference txtNewItem}}"/>
+                </Label.GestureRecognizers>
+        </Label>
+        <CollectionView ItemsSource="{Binding List}"
+                        x:Name="collectionView">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout>
+                        <StackLayout.GestureRecognizers>
+                            <DropGestureRecognizer AllowDrop="True"
+                                                   DragOverCommand="{Binding DragOverCommand}"
+                                                   DropCommand="{Binding DropCommand}"/>
+                        </StackLayout.GestureRecognizers>
+                        <SwipeView>
+                            <SwipeView.LeftItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="Favorite"
+                                           IconImageSource="favv.png"
+                                           BackgroundColor="{Binding Fav, Converter={StaticResource FavBackgorundColorConverter}}"
+                                           Command="{Binding Source={x:Reference collectionView}, Path=BindingContext.FavoriteCommand}"
+                                           CommandParameter="{Binding}" />
+                                    <SwipeItem Text="Delete"
+                                           IconImageSource="delete.png"
+                                           BackgroundColor="Red"
+                                           Command="{Binding Source={x:Reference collectionView}, Path=BindingContext.DeleteCommand}"
+                                           CommandParameter="{Binding}" />
+                                </SwipeItems>
+                            </SwipeView.LeftItems>
+                            <Grid BackgroundColor="White"
+                                  Padding="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Image Source="{Binding Image}"
+                                   IsOpaque="True"
+                                   Grid.Column="0"
+                                   Grid.Row="0"/>
+                                <Label Text="{Binding Name}"
+                                   Grid.Column="1"
+                                   Grid.Row="0"/>
+                            </Grid>
+                        </SwipeView>
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </StackLayout>
+
+</ContentPage>
